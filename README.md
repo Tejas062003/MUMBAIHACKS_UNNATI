@@ -48,7 +48,6 @@ Our system is designed with scalability and user experience in mind:
 ## 💻 Technologies Used
 
 - **Python**: Backend logic and AI model
-- **TensorFlow / PyTorch**: Machine learning for expense predictions
 - **Flask / Django**: Backend frameworks
 - **React / Vue**: Interactive frontend
 - **SQL/NoSQL Databases**: Data management
