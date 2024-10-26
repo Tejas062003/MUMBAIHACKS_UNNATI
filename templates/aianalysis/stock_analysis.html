@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<script src="{% static 'assets/js/plugins/chartjs.min.js' %}"></script>
+<div class="card">
+  <div class="card-body">
+<form method="post">
+    {% csrf_token %}
+        <label for="ticker">Ticker:</label>
+        <input class="form-control" type="text" id="ticker" name="ticker" value="{{ ticker }}">
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+
+    {% if has_data %}
+    <h2>Price Movements</h2>
+    <p>Annual Return: {{ annual_return }}</p>
+    <p>Standard Deviation: {{ stdev }}</p>
+    <p>Risk Adjusted Return: {{ risk_adj_return }}</p>
+   
+        <div class="ai-summary">
+            <h2>AI Summary</h2>
+            <div id="aiSummaryContent">
+                <!-- This will be dynamically filled by the server-side template engine -->
+                {{ ai_summary|safe }}
+            </div>
+        </div>
+<br>
+<br>
+<br>
+<br>
+</div>
+</div>
+
+<!-- News data with fixed image size and 3 cards per row -->
+<div class="container">
+  <div class="row">
+    {% for news_item in news_data %}
+      <div class="col-md-4">
+        <div class="card">
+          <img src="{{ news_item.thumbnail_url }}" class="card-img-top" style="height:200px; object-fit:cover;">
+          <div class="card-body">
+            <h5 class="card-title">{{ news_item.title }}</h5>
+            <p class="card-text">{{ news_item.description }}</p>
+            <a href="{{ news_item.link }}" class="btn btn-primary">Read more</a>
+          </div>
+        </div>
+      </div>
+      {% if forloop.counter|divisibleby:3 and not forloop.last %}
+        </div><div class="row">
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+</div>
+<!-- Display financial data --><br>
+<br>
+<br>
+<br>
+<h3> Financial Data </h3>
+{% if financial_data %}
+  {% for key, value in financial_data.items %}
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <!-- Ensure column names are accessible; assuming value.data has columns attribute -->
+              {% for column in value.data.columns %}
+                <th>{{ column }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in value.data.itertuples %}
+              <tr>
+                {% for cell in row %}
+                  <td>{{ cell }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>No financial data available.</p>
+{% endif %}
+
+{% endif %}
+<script>
+    const aiSummaryContent = document.getElementById('aiSummaryContent').innerHTML;
+    const formattedContent = aiSummaryContent
+        .replace(/\*\*([^*]+)\*\*/g, '<h4>$1</h4>') // Converts **text** to <h2>text</h2>
+        .replace(/(Cluster \d+:)/g, '<b>$1</b>'); // Makes "Cluster x:" bold
+    document.getElementById('aiSummaryContent').innerHTML = formattedContent;
+</script>
+{% endblock %}

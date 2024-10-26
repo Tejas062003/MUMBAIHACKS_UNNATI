@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .card-group {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    .card {
+        flex: 0 0 100%;
+        max-width: 100%;
+        border: 1px solid #e3e3e3;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    @media (min-width: 576px) {
+        .card {
+            flex: 0 0 48%;
+            max-width: 48%;
+        }
+    }
+    @media (min-width: 992px) {
+        .card {
+            flex: 0 0 32%;
+            max-width: 32%;
+        }
+    }
+    .card-img-top {
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        margin: 10px;
+        border-radius: 50%;
+    }
+    .card-body {
+        padding: 1rem;
+    }
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+    .card-description {
+        font-size: 0.9rem;
+        color: #666;
+        height: 50px;
+        overflow: hidden;
+    }
+    .min-amount, .cagr, .volatility {
+        font-size: 0.9rem;
+        color: #333;
+    }
+    .cagr {
+        color: green;
+        font-weight: bold;
+    }
+    .volatility {
+        color: orange;
+    }
+    .card-header {
+        display: flex;
+        align-items: center; /* Centers items vertically within the container */
+    }
+    
+    .card-header a {
+        display: flex;
+        align-items: center;
+        text-decoration: none; /* Removes underline from links */
+        color: inherit; /* Inherits text color from parent */
+    }
+    
+    .img-fluid {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .border-radius-lg {
+        border-radius: 0.5rem;
+    }
+</style>
+
+<div class="container mt-5">
+    <h3>Investment Baskets</h3>
+    
+    <!-- Low Risk Baskets -->
+    <h4>Low Risk Baskets</h4>
+    <div class="card-group">
+        {% for basket in low_risk %}
+        <!-- Basket card -->
+        <div class="card">
+            <div class="card-header d-flex align-items-center p-0 mx-3 mt-3 justify-content-between">
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'basket_detail' basket.id %}" class="d-block flex-shrink-0">
+                        <img src="{{ basket.image }}" class="img-fluid border-radius-lg" style="width: 70px; height: auto;">
+                    </a>
+                    <a href="{% url 'basket_detail' basket.id %}" class="card-title h5 mb-0 px-3">
+                        {{ basket.name }}
+                    </a>
+                </div>
+                <!-- Dynamic Badge for Risk -->
+                {% if basket.volatility == 'Low' %}
+                <span class="badge bg-gradient-success">Low Risk</span>
+                {% elif basket.volatility == 'Mid' %}
+                <span class="badge bg-gradient-warning">Medium Risk</span>
+                {% elif basket.volatility == 'High' %}
+                <span class="badge bg-gradient-danger">High Risk</span>
+                {% endif %}
+            </div>
+            <div class="card-body pt-2">
+                <p class="card-description mb-4">
+                    {{ basket.manager_description }}
+                </p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <p class="min-amount">Min. Amount: ₹<strong>{{ basket.minimum_investment_amount }}</strong></p>
+                    <p class="cagr">3Y CAGR: {{ basket.cagr }}%</p>
+                </div>
+                <p class="volatility">{{ basket.risk }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Medium Risk Baskets -->
+    <h4>Medium Risk Baskets</h4>
+    <div class="card-group">
+        {% for basket in mid_risk %}
+        <!-- Basket card -->
+        <div class="card">
+            <div class="card-header d-flex align-items-center p-0 mx-3 mt-3 justify-content-between">
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'basket_detail' basket.id %}" class="d-block flex-shrink-0">
+                        <img src="{{ basket.image }}" class="img-fluid border-radius-lg" style="width: 70px; height: auto;">
+                    </a>
+                    <a href="{% url 'basket_detail' basket.id %}" class="card-title h5 mb-0 px-3">
+                        {{ basket.name }}
+                    </a>
+                </div>
+                <!-- Dynamic Badge for Risk -->
+                {% if basket.volatility == 'Low' %}
+                <span class="badge bg-gradient-success">Low Risk</span>
+                {% elif basket.volatility == 'Mid' %}
+                <span class="badge bg-gradient-warning">Medium Risk</span>
+                {% elif basket.volatility == 'High' %}
+                <span class="badge bg-gradient-danger">High Risk</span>
+                {% endif %}
+            </div>
+            <div class="card-body pt-2">
+                <p class="card-description mb-4">
+                    {{ basket.manager_description }}
+                </p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <p class="min-amount">Min. Amount: ₹<strong>{{ basket.minimum_investment_amount }}</strong></p>
+                    <p class="cagr">3Y CAGR: {{ basket.cagr }}%</p>
+                </div>
+                <p class="volatility">{{ basket.risk }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- High Risk Baskets -->
+    <h4>High Risk Baskets</h4>
+    <div class="card-group">
+        {% for basket in high_risk %}
+        <!-- Basket card -->
+        <div class="card">
+            <div class="card-header d-flex align-items-center p-0 mx-3 mt-3 justify-content-between">
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'basket_detail' basket.id %}" class="d-block flex-shrink-0">
+                        <img src="{{ basket.image }}" class="img-fluid border-radius-lg" style="width: 70px; height: auto;">
+                    </a>
+                    <a href="{% url 'basket_detail' basket.id %}" class="card-title h5 mb-0 px-3">
+                        {{ basket.name }}
+                    </a>
+                </div>
+                <!-- Dynamic Badge for Risk -->
+                {% if basket.volatility == 'Low' %}
+                <span class="badge bg-gradient-success">Low Risk</span>
+                {% elif basket.volatility == 'Mid' %}
+                <span class="badge bg-gradient-warning">Medium Risk</span>
+                {% elif basket.volatility == 'High' %}
+                <span class="badge bg-gradient-danger">High Risk</span>
+                {% endif %}
+            </div>
+            <div class="card-body pt-2">
+                <p class="card-description mb-4">
+                    {{ basket.manager_description }}
+                </p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <p class="min-amount">Min. Amount: ₹<strong>{{ basket.minimum_investment_amount }}</strong></p>
+                    <p class="cagr">3Y CAGR: {{ basket.cagr }}%</p>
+                </div>
+                <p class="volatility">{{ basket.risk }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

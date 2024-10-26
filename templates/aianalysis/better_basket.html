@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table align-items-center mb-0">
+            <thead>
+                <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Parameter</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Playground Portfolio</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Basket Portfolio</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Expected Annual Return</td>
+                    <td>{{ playground_expected_annual_return }}</td>
+                    <td>{{ basket_annual_return }}</td>
+                </tr>
+                <tr>
+                    <td>Annual Volatility</td>
+                    <td>{{ playground_annual_volatility }}</td>
+                    <td>{{ basket_volatility }}</td>
+                </tr>
+                <tr>
+                    <td>Stocks Weights</td>
+                    <td>
+                        <ul>
+                            {% for stock, weight in playground_optimized_weights.items %}
+                            <li>{{ stock }}: {{ weight }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for stock in basket_description %}
+                            <li>{{ stock }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                                    </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="card my-2">
+    <div class="card-body">
+        <h4 class="card-title">Why Consider Buying Our Basket?</h4>
+        <ul>
+            <li> {{ ai_summary }}</li>
+
+        </ul>
+    </div>
+</div>
+
+
+<script>
+    function formatBoldToHeader() {
+        // Select the element that contains the text to be transformed
+        var contentElement = document.querySelector('.card-body');
+        
+        // Check if the element exists to avoid errors
+        if (contentElement) {
+            // Regular expression to match text within double asterisks
+            var pattern = /\*\*(.*?)\*\*/g;
+            
+            // Replace occurrences of the pattern with <h4> tags
+            contentElement.innerHTML = contentElement.innerHTML.replace(pattern, '<h6>$1</h6>');
+        }
+    }
+    
+    // Call the function when the window loads or when appropriate
+    window.onload = formatBoldToHeader;
+</script>    
+
+
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">AI Summary</h5>
+        <ul>
+            <li>The expected annual return for the playground portfolio is <strong>17.73%</strong>, while the basket portfolio demonstrates a higher expected annual return of <strong>30.54%</strong>.</li>
+            <li>Analysis of annual volatility reveals that the playground portfolio has an annual volatility of <strong>21.35%</strong>, whereas the basket portfolio exhibits a lower annual volatility of <strong>20%</strong>.</li>
+            <li>Considering both the higher expected annual return and lower annual volatility, the basket portfolio appears to be a better investment option compared to the playground portfolio.</li>
+        </ul>
+    </div>
+</div>
+
+
+
+{% endblock  %}

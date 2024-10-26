@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Retirement Planner</title>
+    <style>
+        body {
+            color: #000;
+            background-color: #F44336;
+            background-repeat: no-repeat;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            background-color: #F5F5F5;
+            border-radius: 8px;
+            max-width: 600px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #E53935;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #D32F2F;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #FFF;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Retirement Planner</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="age">Current Age:</label>
+                <input type="number" id="age" name="age" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="retirement_age">Retirement Age:</label>
+                <input type="number" id="retirement_age" name="retirement_age" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="monthly_expense">Monthly Expense:</label>
+                <input type="number" id="monthly_expense" name="monthly_expense" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="current_corpus">Current Retirement Corpus:</label>
+                <input type="number" id="current_corpus" name="current_corpus" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="expected_retirement_amount">Expected Retirement Amount:</label>
+                <input type="number" id="expected_retirement_amount" name="expected_retirement_amount" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="inflation_rate">Expected Inflation Rate (%):</label>
+                <input type="number" id="inflation_rate" name="inflation_rate" class="form-control" required>
+            </div>
+            <button type="submit" class="btn">Calculate</button>
+        </form>
+        {% if years_to_invest is not None %}
+        <div class="results">
+            <h3>Retirement Calculation Result</h3>
+            <p>Years to Invest: {{ years_to_invest }}</p>
+            <p>Required Monthly Investment: {{ required_monthly_investment }}</p>
+            <p>Total Invested Amount: {{ total_invested_amount }}</p>
+            <p>Inflation Adjusted Expense: {{ inflation_adjusted_expense }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

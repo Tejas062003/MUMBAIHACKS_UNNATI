@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Portfolio Growth Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+
+        .chart-container {
+            max-width: 100%;
+            margin: 20px 0;
+        }
+
+        .results {
+            margin: 20px 0;
+            text-align: center;
+            grid-column: 2 / 3;
+        }
+
+        .results table {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border-collapse: collapse;
+            border: 1px solid #444;
+        }
+
+        .results th, .results td {
+            padding: 12px;
+            border: 1px solid #444;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Investment Portfolio Growth Calculator</h1>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+
+        <div class="form-group">
+            <form id="portfolioForm">
+                <label for="risk_level">Select your risk tolerance:</label>
+                <select class="form-control" id="risk_level" name="risk_level">
+                    {% for profile in risk_profiles %}
+                        <option value="{{ profile }}">{{ profile }}</option>
+                    {% endfor %}
+                </select><br>
+
+                <label for="current_age">Current Age:</label>
+                <input class="form-control" type="number" id="current_age" name="current_age" min="18" max="100" value="30"><br>
+
+                <label for="retirement_age">Retirement Age:</label>
+                <input class="form-control" type="number" id="retirement_age" name="retirement_age" min="19" max="100" value="65"><br>
+
+                <label for="monthly_investment">Monthly Investment Amount (in ₹):</label>
+                <input class="form-control" type="number" id="monthly_investment" name="monthly_investment" min="0" value="5000"><br>
+
+                <label for="sector">Select Sector:</label>
+                <select class="form-control" id="sector" name="sector">
+                    <option value="Technology">Technology</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Financials">Financials</option>
+                    <option value="Consumer Discretionary">Consumer Discretionary</option>
+                    <option value="Energy">Energy</option>
+                    <option value="Industrials">Industrials</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Consumer Staples">Consumer Staples</option>
+                    <option value="Real Estate">Real Estate</option>
+                    <option value="Telecommunications">Telecommunications</option>
+                </select><br>
+                <button class="btn btn-primary" type="button" onclick="calculatePortfolio()">Calculate Portfolio Growth</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card">
+
+<div class="card-body">
+
+        <div>
+            <div class="chart-container">
+                <canvas id="portfolioChart"></canvas>
+            </div>
+
+            <div class="results">
+                <h2>Expected Portfolio Value </h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Total Expected Portfolio Worth at Retirement</th>
+                            <th>Highest Expected Portfolio Value</th>
+                            <th>Lowest Expected Portfolio Value</th>
+                            <th>Total Amount Invested</th>
+                            <th>Total Profit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="totalValue"></td>
+                            <td id="highestValue"></td>
+                            <td id="lowestValue"></td>
+                            <td id="totalInvested"></td>
+                            <td id="totalProfit"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var chart;
+
+        function calculatePortfolio() {
+            $.ajax({
+                url: "{% url 'calculate_portfolio' %}",
+                data: $('#portfolioForm').serialize(),
+                success: function(data) {
+                    var ctx = document.getElementById('portfolioChart').getContext('2d');
+                    var chartData = {
+                        labels: data.chart_data.map(item => item.Age),
+                        datasets: [
+                            {
+                                label: 'Portfolio Value (₹)',
+                                data: data.chart_data.map(item => item['Portfolio Value (₹)']),
+                                borderColor: 'rgba(187, 134, 252, 1)',
+                                borderWidth: 2,
+                                fill: false
+                            },
+                            {
+                                label: 'Highest Value (₹)',
+                                data: data.chart_data_high.map(item => item['Highest Value (₹)']),
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 2,
+                                fill: false
+                            },
+                            {
+                                label: 'Lowest Value (₹)',
+                                data: data.chart_data_low.map(item => item['Lowest Value (₹)']),
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 2,
+                                fill: false
+                            }
+                        ]
+                    };
+
+                    if (chart) {
+                        chart.destroy();
+                    }
+
+                    chart = new Chart(ctx, {
+                        type: 'line',
+                        data: chartData,
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#E0E0E0'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    $('#totalValue').text(`₹${data.total_value.toFixed(2)}`);
+                    $('#highestValue').text(`₹${data.highest_value.toFixed(2)}`);
+                    $('#lowestValue').text(`₹${data.lowest_value.toFixed(2)}`);
+                    $('#centerValue').text(`₹${data.center_value.toFixed(2)}`);
+                    $('#totalInvested').text(`₹${data.total_invested.toFixed(2)}`);
+                    $('#totalProfit').text(`₹${data.total_profit.toFixed(2)} (${data.total_profit_percent.toFixed(2)}%)`);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

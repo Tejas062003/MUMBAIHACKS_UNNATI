@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .chart {
+            width: 30%; /* Adjusted to fit three charts side by side */
+            margin: 10px 0;
+        }
+        .ai-summary {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Investment Optimization Results</h1>
+
+    <h2>Cluster Allocation</h2>
+    <div class="chart-container">
+        <div class="chart">
+            <canvas id="clusterAllocationChart"></canvas>
+        </div>
+    </div>
+
+    <h2>Stock Allocation in Each Cluster</h2>
+    <div class="chart-container" id="stockChartsContainer"></div>
+
+    <div class="ai-summary">
+        <h2>AI Summary</h2>
+        <div id="aiSummaryContent">{{ ai_summary|safe }}</div>
+    </div>
+
+    <h2>Leftover Funds</h2>
+    <p id="leftoverFunds"></p>
+
+    <script>
+          
+        document.addEventListener("DOMContentLoaded", function() {
+            const aiSummaryContent = document.getElementById('aiSummaryContent').innerHTML;
+            const formattedContent = aiSummaryContent.replace(/\*\*([^*]+)\*\*/g, '<h2>$1</h2>').replace(/(Cluster \d+:)/g, '<b>$1</b>');
+            document.getElementById('aiSummaryContent').innerHTML = formattedContent;
+            const data = {{ data|safe }};
+            const clusters = data.clusters;
+            const results = data.results;
+            const leftoverFunds = data.leftover_funds[0]['leftover funds'];
+
+            // Cluster Allocation Chart
+            const clusterLabels = ['Low Cap', 'High Cap', 'Mid Cap'];
+            const clusterWeights = clusters.map(cluster => cluster.Weights);
+
+            const clusterCtx = document.getElementById('clusterAllocationChart').getContext('2d');
+            new Chart(clusterCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: clusterLabels,
+                    datasets: [{
+                        data: clusterWeights,
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Cluster Allocation'
+                    }
+                }
+            });
+
+            // Stock Allocation Charts
+            const stockChartsContainer = document.getElementById('stockChartsContainer');
+            const clusterNames = ['Low Cap', 'High Cap', 'Mid Cap'];
+            results.forEach((result, index) => {
+                const symbols = result.Symbols.split(', ');
+                const weights = symbols.map(symbol => result.Weights.Weights[symbol]);
+
+                const chartContainer = document.createElement('div');
+                chartContainer.className = 'chart';
+                const canvas = document.createElement('canvas');
+                canvas.id = `stockChart${index}`;
+                chartContainer.appendChild(canvas);
+                stockChartsContainer.appendChild(chartContainer);
+
+                const ctx = canvas.getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: symbols,
+                        datasets: [{
+                            data: weights,
+                            backgroundColor: ['#cb0c9f', '#8392ab', '#17c1e8', '#82d616', '#ea0606', '#f53939', '#252f40', '#C9CBCF'],
+                            hoverBackgroundColor: ['#cb0c9f', '#8392ab', '#17c1e8', '#82d616', '#ea0606', '#f53939', '#252f40', '#C9CBCF']
+                        }]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: `Stock Allocation for ${clusterNames[index]}`
+                        }
+                    }
+                });
+            });
+
+            // Leftover Funds
+            document.getElementById('leftoverFunds').innerText = `Leftover Funds: ${leftoverFunds}`;
+        });
+
+        
+    </script>
+{% endblock %}

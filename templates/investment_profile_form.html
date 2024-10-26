@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <form action="{% url 'optimize_investment' %}" method="POST">
+        {% csrf_token %}
+        <label for="lifestyle_risk">Risk Level:</label>
+        <select name="lifestyle_risk" id="lifestyle_risk">
+            <option value="low">Low</option>
+            <option value="mid">Mid</option>
+            <option value="high">High</option>
+        </select>
+        <br>
+        <label for="expected_annual_roi">Expected Annual ROI (%):</label>
+        <input type="number" name="expected_annual_roi" id="expected_annual_roi" required>
+        <br>
+        <label for="monthly_investment">Monthly Investment Amount (Rs):</label>
+        <input type="number" name="monthly_investment" id="monthly_investment" required>
+        <br>
+        <label for="current_age">Current Age:</label>
+        <input type="number" name="current_age" id="current_age" required>
+        <br>
+        <label for="retirement_age">Retirement Age:</label>
+        <input type="number" name="retirement_age" id="retirement_age" required>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+{% endblock %}

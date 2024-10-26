@@ -1,0 +1,276 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>Unnati</title>
+
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+	<link rel="apple-touch-icon" sizes="76x76" href="assets1/img/apple-icon.png" />
+	<link rel="icon" type="image/png" href="assets1/img/favicon.png" />
+
+	<!--     Fonts and icons     -->
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
+
+	<!-- CSS Files -->
+	<link href="{% static 'assets1/css/bootstrap.min.css '%}" rel="stylesheet" />
+	<link href="{% static 'assets1/css/material-bootstrap-wizard.css '%}" rel="stylesheet" />
+
+	<!-- CSS Just for demo purpose, don't include it in your project -->
+	<link href="{% static 'assets1/css/demo.css' %}" rel="stylesheet" />
+	
+</head>
+
+<body>
+	<div class="image-container set-full-height" style="background-color: white;">
+	    <a href="">
+	         <div class="logo-container">
+	            <div class="logo">
+	                <img src="{% static 'assets1/img/new_logo.png' %}">
+	            </div>
+	            <div class="brand">
+	             Unnati
+	            </div>
+	        </div>
+	    </a>
+
+
+	    <!--   Big container   -->
+	    <div class="container">
+	        <div class="row">
+		        <div class="col-sm-8 col-sm-offset-2">
+					<div class="wizard-container">
+						<div class="card wizard-card" data-color="purple" id="wizardProfile">
+							<form action="{% url 'optimize_investment1' %}" method="POST">
+								{% csrf_token %}
+								<!-- Wizard header -->
+								<div class="wizard-header">
+									<h3 class="wizard-title">Customize Your Portfolio</h3>
+									<h5>Tailor your investment strategy with just a few details.</h5>
+								</div>
+							
+								<!-- Wizard navigation -->
+								<div class="wizard-navigation">
+									<ul>
+										<li><a href="#personal" data-toggle="tab">Personal Info</a></li>
+										<li><a href="#age" data-toggle="tab">Age Details</a></li>
+										<li><a href="#investment" data-toggle="tab">Investment Details</a></li>
+										<li><a href="#risk" data-toggle="tab">Risk Level</a></li>
+										<li><a href="#summary" data-toggle="tab" onclick="updateSummary()">Summary</a></li> <!-- Call updateSummary() when navigating to the summary tab -->
+									</ul>
+								</div>
+							
+								<!-- Wizard content -->
+								<div class="tab-content">
+									<!-- Personal Info tab -->
+									<div class="tab-pane" id="personal">
+										<h4 class="info-text">"Tell us about your money-making magic and goals. Let's make that portfolio shine! 💰🌟"
+
+										</h4>
+										
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group label-floating">
+													<label for="name" class="control-label">Your Name</label>
+													<input type="text" name="name" id="name" class="form-control" required>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group label-floating">
+													<label for="email" class="control-label">Your Email</label>
+													<input type="email" name="email" id="email" class="form-control" required>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group label-floating">
+													<label for="annual_salary" class="control-label">Annual Salary (Rs)</label>
+													<input type="number" name="annual_salary" id="annual_salary" class="form-control" required>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group label-floating">
+													<label for="monthly_expenses" class="control-label">Monthly Expenses (Rs)</label>
+													<input type="number" name="monthly_expenses" id="monthly_expenses" class="form-control" required>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group label-floating">
+													<label for="savings" class="control-label">Savings (Rs)</label>
+													<input type="number" name="savings" id="savings" class="form-control" required>
+												</div>
+											</div>
+										</div>
+									</div>
+							
+									<!-- Age Details tab -->
+									<div class="tab-pane" id="age">
+										<h4 class="info-text">"Mind sharing your age? It helps us fine-tune your financial future! ✨"
+
+										</h4>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group label-floating">
+													<label for="current_age" class="control-label">Current Age</label>
+													<input type="number" name="current_age" id="current_age" class="form-control" required>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group label-floating">
+													<label for="retirement_age" class="control-label">Retirement Age</label>
+													<input type="number" name="retirement_age" id="retirement_age" class="form-control" required>
+												</div>
+											</div>
+										</div>
+									</div>
+							
+									<!-- Investment Details tab -->
+									<div class="tab-pane" id="investment">
+										<h4 class="info-text">"Ready to boost your 💰? Yearly ROI target (%) and monthly stash (in ₹), please! 😎"
+							</h4>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group label-floating">
+													<label for="expected_annual_roi" class="control-label">Expected Annual ROI (%)</label>
+													<input type="number" name="expected_annual_roi" id="expected_annual_roi" class="form-control" required>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group label-floating">
+													<label for="monthly_investment" class="control-label">Monthly Investment Amount (Rs)</label>
+													<input type="number" name="monthly_investment" id="monthly_investment" class="form-control" required>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<div class="tab-pane" id="risk">
+										<h4 class="info-text">Choose your risk appetite: 🚀 Aggressive, 🤔 Mid, 🛌 Low!</h4>
+										<div class="row">
+											<div class="col-sm-10 col-sm-offset-1">
+												<div class="col-sm-4">
+													<div class="choice" data-toggle="wizard-radio">
+														<input type="radio" name="lifestyle_risk" id="lowRisk" value="low">
+														<label for="lowRisk">
+															<div class="icon">
+																<i class="material-icons">security</i>
+															</div>
+															<h6>Low 🐢</h6>
+														</label>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="choice" data-toggle="wizard-radio">
+														<input type="radio" name="lifestyle_risk" id="midRisk" value="mid">
+														<label for="midRisk">
+															<div class="icon">
+																<i class="material-icons">trending_up</i>
+															</div>
+															<h6>Mid 😎</h6>
+														</label>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="choice" data-toggle="wizard-radio">
+														<input type="radio" name="lifestyle_risk" id="highRisk" value="high">
+														<label for="highRisk">
+															<div class="icon">
+																<i class="material-icons">whatshot</i>
+															</div>
+															<h6>Aggressive 😈 </h6>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+						<!-- Summary tab -->
+<div class="tab-pane" id="summary">
+    <h4 class="info-text">Review and submit your details.</h4>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label>Summary</label>
+                <div id="summaryContent">
+                    <!-- Summary content will be filled dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateSummary() {
+        // Extract form values
+        var name = document.getElementById('name').value;
+        var email = document.getElementById('email').value;
+        var annualSalary = document.getElementById('annual_salary').value;
+        var monthlyExpenses = document.getElementById('monthly_expenses').value;
+        var savings = document.getElementById('savings').value;
+        var currentAge = document.getElementById('current_age').value;
+        var retirementAge = document.getElementById('retirement_age').value;
+        var expectedROI = document.getElementById('expected_annual_roi').value;
+        var monthlyInvestment = document.getElementById('monthly_investment').value;
+        var riskLevel = document.querySelector('input[name="lifestyle_risk"]:checked');
+        var riskLevelValue = riskLevel ? riskLevel.value : '';
+
+        // Calculate investment period
+        var investmentPeriod = retirementAge - currentAge;
+
+        // Update summary content
+        var summaryContent = `
+            <p>Name: ${name}</p>
+            <p>Email: ${email}</p>
+            <p>Annual Salary: ${annualSalary} Rs</p>
+            <p>Monthly Expenses: ${monthlyExpenses} Rs</p>
+            <p>Savings: ${savings} Rs</p>
+            <p>Current Age: ${currentAge}</p>
+            <p>Retirement Age: ${retirementAge}</p>
+            <p>Expected Annual ROI: ${expectedROI}%</p>
+            <p>Monthly Investment Amount: ${monthlyInvestment} Rs</p>
+            <p>Risk Level: Aggressive</p>
+            <p>Investment Period: ${investmentPeriod} years</p>
+        `;
+
+        document.getElementById('summaryContent').innerHTML = summaryContent;
+    }
+</script>
+						
+							<!-- Wizard footer -->
+							<div class="wizard-footer">
+							  <div class="pull-right">
+								<input type="button" class="btn btn-next btn-fill btn-primary btn-wd" name="next" value="Next" />
+								<input type="submit" class="btn btn-finish btn-fill btn-primary btn-wd" name="finish" value="Finish" />
+							  </div>
+							  <div class="pull-left">
+								<input type="button" class="btn btn-previous btn-fill btn-default btn-wd" name="previous" value="Previous" />
+							  </div>
+							  <div class="clearfix"></div>
+							</div>
+						  </form>
+						</div>
+					  </div>
+					  
+
+	    <div class="footer">
+	        <div class="container text-center">
+	             Made with <i class="fa fa-heart heart"></i> by <a href="">Unnati</a>. <a href="http://www.creative-tim.com/product/material-bootstrap-wizard">here.</a>
+	        </div>
+	    </div>
+	</div>
+
+</body>
+	<!--   Core JS Files   -->
+	<script src="{% static 'assets1/js/jquery-2.2.4.min.js' %}" type="text/javascript"></script>
+	<script src="{% static 'assets1/js/bootstrap.min.js '%}" type="text/javascript"></script>
+	<script src="{% static 'assets1/js/jquery.bootstrap.js '%}" type="text/javascript"></script>
+
+	<!--  Plugin for the Wizard -->
+	<script src="{% static 'assets1/js/material-bootstrap-wizard.js '%}"></script>
+
+	<!--  More information about jquery.validate here: http://jqueryvalidation.org/	 -->
+	<script src="{% static 'assets1/js/jquery.validate.min.js '%}"></script>
+</html>

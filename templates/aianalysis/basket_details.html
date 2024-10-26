@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+    <div class="row">
+        <!-- Left Column: Image, Name, Description, Distribution, Manager's Insight -->
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <img src="{{ basket.image }}" class="img-fluid border-radius-lg" style="width: 100px; height: 100px; margin-right: 15px;">
+                <h2 class="mb-0">{{ basket.name }}</h2>
+            </div>
+            
+            <!-- Basket Description -->
+            <h5>Description:</h5>
+            <ul>
+                <li>{{ basket.basket_description }}</li>
+            </ul>
+            
+            <hr style="border-top: 1px solid #e0e0e0;">
+            
+            <!-- Holdings Distribution -->
+            <h5>Holdings Distribution:</h5>
+            <div class="progress">
+                {% for holding in holdings %}
+                <div id="holding-{{ forloop.counter0 }}" class="progress-bar" role="progressbar" style="width: {{ holding.distribution_percentage }}%; color: white;" aria-valuenow="{{ holding.distribution_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                    {{ holding.asset_name }} - {{ holding.distribution_percentage }}%
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Basket Description -->
+            <h5>Manager Description:</h5>
+            <ul>
+                <li>{{ basket.manager_description }}</li>
+            </ul>
+            
+
+        </div>
+
+        <!-- Right Column: Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header p-0 mx-3 mt-3 position-relative z-index-3">
+                    <a href="javascript:;" class="d-block blur-shadow-image">
+                        <img src="https://img.freepik.com/free-vector/hand-drawn-stock-market-concept-with-arrow_23-2149163552.jpg"  style="width: 300px; height: 200px; "class="img-fluid border-radius-lg">
+                    </a>
+                </div>
+                <div class="card-body">
+                    <!-- Dynamic Badge for Risk based on Volatility -->
+                    {% if basket.volatility == 'Low' %}
+                    <span class="badge badge-pill badge-lg bg-gradient-success">Low Risk</span>
+                    {% elif basket.volatility == 'Mid' %}
+                    <span class="badge badge-pill badge-lg bg-gradient-warning">Medium Risk</span>
+                    {% elif basket.volatility == 'High' %}
+                    <span class="badge badge-pill badge-lg bg-gradient-danger">High Risk</span>
+                    {% endif %}
+            <br>
+                    <ul class="list-unstyled">
+                        <p>CAGR: <span style="color:green; font-weight: bold;">{{ basket.cagr }}%</span></p>
+                        <p>Volatility: <span style="font-weight: bold;">{{ basket.volatility }}</span></p>
+                        <p>Minimum Investment Amount: <span style="font-weight: bold;">₹{{ basket.minimum_investment_amount }}</span></p>
+                    </ul>
+
+                    <button type="button" class="btn bg-gradient-info">Add to Watchlist</button>
+                    <button type="button" class="btn bg-gradient-success">Invest Now</button>                </div>
+                
+            </div>
+       
+        </div>
+    </div>
+</div>
+
+            
+
+<script>
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        var colors = ['#cb0c9f', '#17c1e8', '#8392ab', '#252f40', '#e9ecef', '#ada0e7', '#3399FF'];
+        var holdings = document.querySelectorAll('.progress-bar');
+        holdings.forEach(function(bar, index) {
+            bar.style.backgroundColor = colors[index % colors.length];
+        });
+    });
+</script>
+
+<style>
+    .progress {
+        width: 100%; /* Full width */
+        height: 35px; /* Set the height of the progress bar */
+        background-color: #e0e0e0; /* Light grey background */
+        border-radius: 8px; /* Rounded corners */
+        overflow: hidden; /* Ensures the content does not overflow */
+        margin-top: 20px; /* Add margin top for separation */
+    }
+
+    .progress-bar {
+        float: left; /* Align bars side by side */
+        height: 100%; /* Full height of the container */
+        font-size: 16px; /* Font size for text inside the bar */
+        line-height: 20px; /* Align text vertically */
+        color: white; /* Text color */
+        text-align: center; /* Center text horizontally */
+        border-right: 2px solid #f0f0f0; /* Add a slight division between bars */
+    }
+</style>
+
+{% endblock %}

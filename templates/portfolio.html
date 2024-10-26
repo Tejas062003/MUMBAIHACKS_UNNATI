@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="card">
+    <title>Portfolio Diversification Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .chart-box {
+            width: 400px;
+            height: 400px;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Portfolio Diversification Analysis</h1>
+
+    <div class="chart-container">
+        <div class="chart-box">
+            <canvas id="generalChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <canvas id="sectorChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <canvas id="countryChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <canvas id="marketCapsChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const generalDist = {{ general_dist|safe }};
+        const sectorDist = {{ sector_dist|safe }};
+        const countryDist = {{ country_dist|safe }};
+        const marketCapsDist = {{ market_caps_dist|safe }};
+    
+        const colors = [
+            '#cb0c9f', '#8392ab', '#17c1e8', '#82d616', '#ea0606', '#f53939', '#252f40', '#C9CBCF'
+        ];
+    
+        function createPieChart(ctx, data, title) {
+            const isIndustryDistribution = title === 'Industry 1Distribution';
+    
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [{
+                        data: Object.values(data),
+                        backgroundColor: colors.slice(0, Object.keys(data).length)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: 'black'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: title,
+                            color: 'black'
+                        },
+                        datalabels: isIndustryDistribution ? {
+                            color: 'black',
+                            formatter: (value, ctx) => {
+                                let sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                let percentage = (value * 100 / sum).toFixed(2) + "%";
+                                return percentage;
+                            },
+                            font: {
+                                weight: 'bold',
+                                size: 14,
+                            }
+                        } : false
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+    
+        createPieChart(document.getElementById('generalChart').getContext('2d'), generalDist, 'General Distribution');
+        createPieChart(document.getElementById('sectorChart').getContext('2d'), sectorDist, 'Industry Distribution');
+        createPieChart(document.getElementById('countryChart').getContext('2d'), countryDist, 'Country Distribution');
+        createPieChart(document.getElementById('marketCapsChart').getContext('2d'), marketCapsDist, 'Market Cap Distribution');
+    </script>
+</body>
+</html>
+{% endblock %}
